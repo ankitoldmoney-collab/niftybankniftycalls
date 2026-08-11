@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Bank Nifty &amp; Nifty Options Calls | Precision Intraday Signals</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0B0F14;
+    --surface:#121821;
+    --surface2:#182230;
+    --border:#232E3D;
+    --green:#16C784;
+    --red:#EA3943;
+    --gold:#D4AF37;
+    --text:#E8EDF2;
+    --muted:#8695A7;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{font-family:'Sora',sans-serif;letter-spacing:-0.02em;}
+  .mono{font-family:'JetBrains Mono',monospace;}
+  a{color:inherit;text-decoration:none;}
+  .wrap{max-width:1120px;margin:0 auto;padding:0 24px;}
+
+  /* Candlestick motif strip */
+  .strip{
+    display:flex;align-items:flex-end;gap:3px;height:40px;
+    overflow:hidden;background:var(--surface);border-bottom:1px solid var(--border);
+    padding:0 12px;
+  }
+  .candle{width:5px;border-radius:1px;opacity:.55;}
+  .candle.up{background:var(--green);}
+  .candle.down{background:var(--red);}
+
+  header.nav{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:20px 0;
+  }
+  .logo{font-weight:800;font-size:1.15rem;display:flex;align-items:center;gap:8px;}
+  .logo .dot{width:9px;height:9px;background:var(--green);border-radius:50%;display:inline-block;}
+  .nav-cta{
+    background:var(--gold);color:#0B0F14;font-weight:700;padding:10px 20px;
+    border-radius:8px;font-size:.9rem;
+  }
+
+  .hero{padding:64px 0 48px;position:relative;}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;
+    color:var(--green);font-family:'JetBrains Mono',monospace;font-size:.8rem;
+    background:rgba(22,199,132,0.08);border:1px solid rgba(22,199,132,0.25);
+    padding:6px 12px;border-radius:100px;margin-bottom:20px;
+  }
+  .hero h1{font-size:clamp(2.1rem,5vw,3.4rem);font-weight:800;line-height:1.08;max-width:780px;}
+  .hero h1 .accent{color:var(--green);}
+  .hero p.sub{
+    color:var(--muted);font-size:1.1rem;max-width:600px;margin-top:20px;
+  }
+  .hero-ctas{display:flex;gap:14px;margin-top:32px;flex-wrap:wrap;}
+  .btn-primary{
+    background:var(--green);color:#06110C;font-weight:700;padding:14px 26px;
+    border-radius:9px;font-size:.98rem;border:none;cursor:pointer;
+  }
+  .btn-ghost{
+    border:1px solid var(--border);padding:14px 26px;border-radius:9px;
+    font-weight:600;color:var(--text);
+  }
+
+  .stats{display:flex;gap:40px;margin-top:56px;flex-wrap:wrap;}
+  .stat .num{font-family:'JetBrains Mono',monospace;font-size:1.7rem;font-weight:700;color:var(--gold);}
+  .stat .label{color:var(--muted);font-size:.82rem;margin-top:2px;}
+
+  section{padding:64px 0;border-top:1px solid var(--border);}
+  .section-head{max-width:560px;margin-bottom:40px;}
+  .section-head .kicker{color:var(--gold);font-family:'JetBrains Mono',monospace;font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;}
+  .section-head h2{font-size:1.9rem;margin-top:8px;}
+  .section-head p{color:var(--muted);margin-top:10px;}
+
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media(max-width:860px){.grid3{grid-template-columns:1fr;}}
+
+  .feature{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;
+  }
+  .feature .icon{
+    width:38px;height:38px;border-radius:9px;background:rgba(212,175,55,0.12);
+    display:flex;align-items:center;justify-content:center;color:var(--gold);font-weight:700;margin-bottom:16px;
+  }
+  .feature h3{font-size:1.05rem;margin-bottom:8px;}
+  .feature p{color:var(--muted);font-size:.92rem;}
+
+  /* Pricing */
+  .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+  @media(max-width:860px){.plans{grid-template-columns:1fr;}}
+  .plan{
+    background:var(--surface);border:1px solid var(--border);border-radius:16px;
+    padding:28px;display:flex;flex-direction:column;
+  }
+  .plan.featured{border-color:var(--gold);background:linear-gradient(180deg,var(--surface2),var(--surface));position:relative;}
+  .plan.featured::before{
+    content:"MOST POPULAR";position:absolute;top:-11px;left:24px;
+    background:var(--gold);color:#0B0F14;font-size:.68rem;font-weight:800;
+    padding:4px 10px;border-radius:100px;letter-spacing:.05em;
+  }
+  .plan h3{font-size:1.1rem;color:var(--muted);font-weight:600;}
+  .plan .price{font-family:'JetBrains Mono',monospace;font-size:2.1rem;font-weight:700;margin:10px 0 4px;}
+  .plan .price span{font-size:.95rem;color:var(--muted);font-weight:500;}
+  .plan ul{list-style:none;margin:20px 0;flex:1;}
+  .plan li{color:var(--muted);font-size:.88rem;padding:7px 0;display:flex;gap:8px;}
+  .plan li::before{content:"✓";color:var(--green);font-weight:700;}
+  .plan button{
+    width:100%;padding:13px;border-radius:9px;border:none;font-weight:700;cursor:pointer;
+    background:var(--surface2);color:var(--text);border:1px solid var(--border);font-size:.95rem;
+  }
+  .plan.featured button{background:var(--gold);color:#0B0F14;}
+  .plan button:disabled{opacity:.6;cursor:wait;}
+
+  .disclaimer{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:20px 22px;color:var(--muted);font-size:.8rem;line-height:1.6;
+  }
+  footer{padding:36px 0;color:var(--muted);font-size:.82rem;text-align:center;border-top:1px solid var(--border);}
+
+  #pay-status{
+    position:fixed;bottom:20px;right:20px;background:var(--surface2);border:1px solid var(--border);
+    padding:14px 18px;border-radius:10px;font-size:.88rem;display:none;max-width:280px;
+  }
+</style>
+</head>
+<body>
+
+  <div class="strip" id="strip"></div>
+
+  <div class="wrap">
+    <header class="nav">
+      <div class="logo"><span class="dot"></span> BankNifty<span style="color:var(--gold)">Calls</span></div>
+      <a href="#plans" class="nav-cta">Subscribe</a>
+    </header>
+
+    <section class="hero" style="border:none;padding-top:36px;">
+      <div class="eyebrow">● LIVE INTRADAY DESK</div>
+      <h1>Bank Nifty &amp; Nifty options calls, <span class="accent">timed like a trade desk.</span></h1>
+      <p class="sub">Entry, target and stop-loss levels delivered the moment the setup triggers — no noise, no guesswork. Built for traders who want discipline, not tips.</p>
+      <div class="hero-ctas">
+        <a href="#plans" class="btn-primary">See Plans</a>
+        <a href="#how" class="btn-ghost">How it works</a>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">Entry · Target · SL</div><div class="label">Every call, every time</div></div>
+        <div class="stat"><div class="num">Intraday</div><div class="label">Bank Nifty + Nifty focus</div></div>
+        <div class="stat"><div class="num">Direct Alerts</div><div class="label">No app hopping</div></div>
+      </div>
+    </section>
+  </div>
+
+  <section id="how">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Process</div>
+        <h2>How the desk works</h2>
+        <p>A simple, repeatable routine — the same one used before every trading session.</p>
+      </div>
+      <div class="grid3">
+        <div class="feature"><div class="icon">01</div><h3>Pre-market setup</h3><p>Key levels for Bank Nifty and Nifty mapped out before the bell.</p></div>
+        <div class="feature"><div class="icon">02</div><h3>Live trigger alerts</h3><p>Calls sent only when the setup actually confirms — not on hope.</p></div>
+        <div class="feature"><div class="icon">03</div><h3>Exit discipline</h3><p>Target and stop-loss shared upfront with every entry, no exceptions.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="plans">
+    <div class="wrap">
+      <div class="section-head">
+        <div class="kicker">Pricing</div>
+        <h2>Choose your access</h2>
+        <p>Secure checkout via WatchPays. Access begins immediately after payment confirmation.</p>
+      </div>
+
+      <div class="plans">
+        <div class="plan">
+          <h3>Weekly</h3>
+          <div class="price">₹1,499 <span>/ week</span></div>
+          <ul>
+            <li>Bank Nifty + Nifty calls</li>
+            <li>Entry / Target / SL on every call</li>
+            <li>Direct alert channel access</li>
+          </ul>
+          <button data-plan="weekly" class="pay-btn">Get Weekly Access</button>
+        </div>
+
+        <div class="plan featured">
+          <h3>Monthly</h3>
+          <div class="price">₹4,999 <span>/ month</span></div>
+          <ul>
+            <li>Everything in Weekly</li>
+            <li>Pre-market level notes daily</li>
+            <li>Priority alert delivery</li>
+            <li>End-of-day recap</li>
+          </ul>
+          <button data-plan="monthly" class="pay-btn">Get Monthly Access</button>
+        </div>
+
+        <div class="plan">
+          <h3>Quarterly</h3>
+          <div class="price">₹12,999 <span>/ 3 months</span></div>
+          <ul>
+            <li>Everything in Monthly</li>
+            <li>Best effective price</li>
+            <li>Priority support</li>
+          </ul>
+          <button data-plan="quarterly" class="pay-btn">Get Quarterly Access</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="wrap">
+      <div class="disclaimer">
+        <strong style="color:var(--text)">Risk Disclosure:</strong> Investments in the securities market, including trading in Bank Nifty and Nifty options, are subject to market risk. Past performance is not indicative of future returns. Options trading involves substantial risk of loss and is not suitable for all investors. This service provides trade-related information for educational purposes and does not constitute personalised investment advice. Please verify the registration status of any advisory service on the SEBI website before subscribing, and trade only with capital you can afford to lose.
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="wrap">© 2026 BankNiftyCalls. All rights reserved.</div>
+  </footer>
+
+  <div id="pay-status"></div>
+
+<script>
+  // Decorative candlestick strip (illustrative pattern, not live data)
+  (function(){
+    const strip = document.getElementById('strip');
+    for(let i=0;i<80;i++){
+      const up = Math.random() > 0.45;
+      const h = 8 + Math.random()*28;
+      const c = document.createElement('div');
+      c.className = 'candle ' + (up ? 'up':'down');
+      c.style.height = h+'px';
+      strip.appendChild(c);
+    }
+  })();
+
+  function showStatus(msg){
+    const el = document.getElementById('pay-status');
+    el.style.display = 'block';
+    el.textContent = msg;
+  }
+
+  document.querySelectorAll('.pay-btn').forEach(btn=>{
+    btn.addEventListener('click', async ()=>{
+      const plan = btn.getAttribute('data-plan');
+      btn.disabled = true;
+      const originalText = btn.textContent;
+      btn.textContent = 'Redirecting to payment…';
+      showStatus('Payment order create ho raha hai…');
+      try{
+        const res = await fetch('/api/create-payment', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ plan })
+        });
+        const data = await res.json();
+        if(data.success && data.payment_url){
+          showStatus('Redirecting…');
+          window.location.href = data.payment_url;
+        } else {
+          showStatus('Payment start nahi ho paya: ' + (data.error || 'Unknown error'));
+          btn.disabled = false;
+          btn.textContent = originalText;
+        }
+      } catch(err){
+        showStatus('Network error, dobara try karein.');
+        btn.disabled = false;
+        btn.textContent = originalText;
+      }
+    });
+  });
+</script>
+</body>
+</html>
